@@ -1,1 +1,1 @@
-# Messing with clojure and clojure-script
+# Messing around with clojure and clojure-script
