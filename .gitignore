@@ -11,3 +11,13 @@ pom.xml.asc
 .hg/
 *.log
 /resources/public/js
+
+# Emacs
+*~
+*#
+.#*
+.ensime
+.ensime_cache
+TAGS
+.tern-port
+.dir-locals.el
