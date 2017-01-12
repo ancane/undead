@@ -11,12 +11,30 @@
    :sand (repeat 30 :remaining)})
 
 (defn- revealed-tiles [game]
-  (->> game :tiles (filter :revealed?) count))
+  (->> game :tiles (filter :revealed?)))
 
 (defn- can-reveal? [game]
   (> 2 (count (revealed-tiles game))))
 
+(defn- match-revealed [tiles]
+  (mapv (fn [tile]
+          (if (:revealed? tile)
+            (->
+             tile
+             (assoc :matched? true)
+             (dissoc :revealed?))
+            tile)) tiles))
+
+(defn- check-for-match [game]
+  (let [revealed (revealed-tiles game)]
+    (if (and (= 2 (count revealed))
+             (= 1 (count (set (map :face revealed)))))
+      (update-in game [:tiles] match-revealed)
+      game)))
+
 (defn reveal-tile [game index]
   (if (can-reveal? game)
-    (assoc-in game [:tiles index :revealed?] true)
+    (-> game
+        (assoc-in [:tiles index :revealed?] true)
+        (check-for-match))
     game))

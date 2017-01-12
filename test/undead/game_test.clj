@@ -20,18 +20,41 @@
   (is (< 10 (count (set (repeatedly 100 create-game)))))
   (is (= {:remaining 30} (frequencies (:sand (create-game))))))
 
-(deftest tiles
 
+(deftest tiles
   (is (= 1 (->> (reveal-tile (create-game) 0)
                 :tiles (filter :revealed?) count)))
-
+  ;; not allowed to reveal more then 2 tiles
   (is (=
        #{{:face :h1 :revealed? true}
          {:face :h2 :revealed? true}}
        (->> (create-game)
             (reveal-one :h1)
             (reveal-one :h2)
+            (reveal-one :h3)
             :tiles
             (filter :revealed?)
             (set))))  
+
+  ;; match tiles if same face revealed
+  (is (=
+       [{:face :h1 :matched? true}
+        {:face :h1 :matched? true}]
+       (->> (create-game)
+            (reveal-one :h1)
+            (reveal-one :h1)
+            :tiles
+            (filter :matched?))))
+
+  ;; match new tile after 2 revealed
+  (is (=
+       #{{:face :h3 :revealed? true}}
+       (->> (create-game)
+            (reveal-one :h1)
+            (reveal-one :h1)
+            (reveal-one :h3)
+            :tiles
+            (filter :revealed?)
+            (set))))
+
   )
