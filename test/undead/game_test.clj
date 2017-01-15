@@ -57,4 +57,26 @@
             (filter :revealed?)
             (set))))
 
+  ;; foggy board
+  (is (->> (create-game)
+           (reveal-one :fg)
+           (reveal-one :fg)
+           :foggy?))
+
+  ;; zombies
+  (is (= [:zombie :zombie :zombie :remaining]
+         (->> (create-game)
+              (reveal-one :zo)
+              (reveal-one :zo)
+              :sand
+              (take 4))))
+
+  ;; revealing 2 zombies turns graveyard into zombies
+  (is (= {:h1 2 :h2 2 :h3 2 :h4 2 :h5 2 :fg 2 :zo 4}
+         (->> (create-game)
+              (reveal-one :zo)
+              (reveal-one :zo)
+              :tiles (map :face) frequencies
+              )))
+  
   )
