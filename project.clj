@@ -9,7 +9,9 @@
                  [http-kit "2.2.0"]
                  [com.stuartsierra/component "0.3.2"]
                  [compojure "1.5.1"]
-                 [quiescent "0.3.2"]]
+                 [quiescent "0.3.2"]
+                 [org.clojure/core.async "0.2.395"]
+                 [jarohen/chord "0.7.0"]]
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.8"]]
   :target-path "target/%s"
