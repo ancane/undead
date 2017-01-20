@@ -32,37 +32,36 @@
   (is (= 1 (->> (reveal-tile (create-game) 0)
                 :tiles (filter :revealed?) count)))
   ;; not allowed to reveal more then 2 tiles
-  (is (=
-       #{{:face :h1 :revealed? true}
-         {:face :h2 :revealed? true}}
-       (->> (create-game)
+  (is (= [:h1 :h2]
+         (->> (create-game)
             (reveal-one :h1)
             (reveal-one :h2)
             (reveal-one :h3)
             :tiles
             (filter :revealed?)
-            (set))))  
+            (map :face)
+            (sort))))  
 
   ;; match tiles if same face revealed
   (is (=
-       [{:face :h1 :matched? true}
-        {:face :h1 :matched? true}]
+       [:h1 :h1]
        (->> (create-game)
             (reveal-one :h1)
             (reveal-one :h1)
             :tiles
-            (filter :matched?))))
+            (filter :matched?)
+            (map :face))))
 
   ;; match new tile after 2 revealed
   (is (=
-       #{{:face :h3 :revealed? true}}
+       [:h3]
        (->> (create-game)
             (reveal-one :h1)
             (reveal-one :h1)
             (reveal-one :h3)
             :tiles
             (filter :revealed?)
-            (set))))
+            (map :face))))
 
   ;; foggy board
   (is (->> (create-game)
@@ -84,6 +83,31 @@
               (reveal-one :zo)
               (reveal-one :zo)
               :tiles (map :face) frequencies
-              )))
-  
+              )))  
+  )
+
+
+;; test 
+(deftest ticks-test
+
+  (is (= 2 (->> (create-game)
+                (reveal-one :h1)
+                (reveal-one :h2)
+                tick tick
+                :tiles (filter :revealed?) count)))
+
+  (is (= 0 (->> (create-game)
+                (reveal-one :h1)
+                (reveal-one :h2)
+                tick tick tick
+                :tiles
+                (filter :revealed?) count)))
+
+  (is (=
+       {nil 14 :h1 1 :h2 1}
+       (->> (create-game)
+            (reveal-one :h1)
+            (reveal-one :h2)
+            tick tick tick tick
+            prep :tiles (map :face) frequencies)))
   )
