@@ -10,10 +10,11 @@
                                  (when (:matched? tile) " matched"))
                  :onClick (fn [e]
                             (.preventDefault e)
-                            (put! reveal-ch 0))}
+                            (put! reveal-ch (:id tile)))}
                 (d/div {:className "front"})
                 (d/div {:className (str "back "
-                                        (name (:face tile))
+                                        (when (:face tile)
+                                          (name (:face tile)))
                                         (when (:matched? tile) " matched"))}))))
 
 (q/defcomponent Line [tiles reveal-ch]

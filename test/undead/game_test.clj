@@ -18,8 +18,15 @@
        {:h1 2 :h2 2 :h3 2 :h4 2 :h5 2 :fg 2 :zo 3 :gy 1}
        (->> (create-game) :tiles (map :face) frequencies)))
   (is (< 10 (count (set (repeatedly 100 create-game)))))
-  (is (= {:remaining 30} (frequencies (:sand (create-game))))))
-
+  (is (= {:remaining 30} (->> (create-game) :sand frequencies)))
+  (is (= {nil 16} (->> (create-game) prep :tiles (map :face) frequencies)))
+  ;; keap revealed tiles
+  (is (= {nil 15 :h1 1} (->> (create-game) (reveal-one :h1) prep :tiles (map :face) frequencies)))
+  ;; keap matched tiles
+  (is (= {nil 14 :h1 2} (->> (create-game) (reveal-one :h1) (reveal-one :h1) prep :tiles (map :face) frequencies)))
+  ;; tile ids
+  (is (= (range 0 16) (->> (create-game) prep :tiles (map :id))))
+  )
 
 (deftest tiles
   (is (= 1 (->> (reveal-tile (create-game) 0)

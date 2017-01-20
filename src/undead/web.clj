@@ -4,13 +4,13 @@
             [compojure
              [core :refer [defroutes GET]]
              [route :refer [resources]]]
-            [undead.game :refer [create-game reveal-tile]]))
+            [undead.game :refer [create-game reveal-tile prep]]))
 
 (defn ws-handler [req]
   (with-channel req ws-channel
     (go
       (loop [game (create-game)]
-        (>! ws-channel game)
+        (>! ws-channel (prep game))
         (when-let [tile-index (:message (<! ws-channel))]
           (recur (reveal-tile game tile-index)))))))
 
