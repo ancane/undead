@@ -111,3 +111,33 @@
             tick tick tick tick
             prep :tiles (map :face) frequencies)))
   )
+
+(defn- tick-n [n game]
+  (first (drop n (iterate tick game))))
+
+(deftest die-from-zombies-test
+
+  (is (= [:gone :remaining]
+         (->> (create-game)
+              (tick-n 5)
+              :sand (take 2))))
+
+  ;; all sand is gone after 150 ticks
+  (is (= {:gone 30}
+         (->> (create-game)
+              (tick-n 150)
+              :sand frequencies)))
+
+  ;; no more sand gone after 150 ticks
+  (is (= {:gone 30}
+         (->> (create-game)
+              (tick-n 155)
+              :sand frequencies)))
+
+  ;; dead?
+  (is (= true
+         (->> (create-game)
+              (tick-n 151)
+              :dead?)))
+
+  )
