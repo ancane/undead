@@ -86,7 +86,6 @@
               )))  
   )
 
-
 ;; test 
 (deftest ticks-test
 
@@ -115,6 +114,19 @@
 (defn- tick-n [n game]
   (first (drop n (iterate tick game))))
 
+(defn- reveal-two [face game]
+  (->> game
+       (reveal-one face)
+       (reveal-one face)))
+
+(defn- reveal-all-houses [game]
+  (->> game
+       (reveal-two :h1)
+       (reveal-two :h2)
+       (reveal-two :h3)
+       (reveal-two :h4)
+       (reveal-two :h5)))
+
 (deftest die-from-zombies-test
 
   (is (= [:gone :remaining]
@@ -140,4 +152,37 @@
               (tick-n 151)
               :dead?)))
 
+  ;; getting out alive
+
+  (is (= nil
+         (->> (create-game)
+              (reveal-all-houses)
+              tick tick
+              :safe?)))
+
+  (is (= 60
+         (->> (create-game)
+              (reveal-all-houses)
+              tick tick tick
+              :sand count)))
+
+  (is (= true
+         (->> (create-game)
+              (reveal-all-houses)
+              tick tick tick
+              :tiles (filter :matched?)
+              empty?)))
+
+  (is (= 90
+         (->> (create-game)
+              (reveal-all-houses) tick tick tick
+              (reveal-all-houses) tick tick tick
+              :sand count)))
+  
+  (is (= true
+         (->> (create-game)
+              (reveal-all-houses) tick tick tick
+              (reveal-all-houses) tick tick tick
+              (reveal-all-houses) tick tick tick
+              :safe?)))
   )

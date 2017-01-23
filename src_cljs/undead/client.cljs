@@ -10,9 +10,11 @@
   (go
     (let [{:keys [ws-channel error]} (<! (ws-ch "ws://localhost:9009/ws"))]
       (when error (throw error))
+
       (loop []
         (when-let [game (:message (<! ws-channel))]
           (render-game game container ws-channel)
-          (if (:dead? game)
-            (set! (.-className (.-body js/document)) "game-over")
-            (recur)))))))
+          (cond
+            (:dead? game) (set! (.-className (.-body js/document)) "game-over")
+            (:safe? game) (set! (.-location js/document) "/safe.html")
+            :else (recur)))))))
